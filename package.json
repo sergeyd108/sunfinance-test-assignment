@@ -1,0 +1,36 @@
+{
+  "name": "sunfinance-test-assignment",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev --host",
+    "typecheck": "nuxt typecheck",
+    "build": "nuxt build",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "fmt": "prettier --write .",
+    "pkg:up:minor": "pnpm dlx taze minor -l -w && pnpm i",
+    "pkg:up:major": "pnpm dlx taze major -l -w && pnpm i"
+  },
+  "dependencies": {
+    "@iconify-json/lucide": "1.2.108",
+    "@iconify-json/simple-icons": "1.2.83",
+    "@nuxt/ui": "4.7.1",
+    "@pinia/nuxt": "0.11.3",
+    "@vueuse/nuxt": "14.3.0",
+    "nuxt": "4.4.6",
+    "vue": "3.5.34"
+  },
+  "devDependencies": {
+    "@nuxt/eslint": "1.15.2",
+    "eslint": "10.4.0",
+    "prettier": "3.8.3",
+    "prettier-plugin-tailwindcss": "0.8.0",
+    "tailwindcss": "4.3.0",
+    "typescript": "6.0.3",
+    "vue-tsc": "3.3.0"
+  },
+  "packageManager": "pnpm@11.1.3"
+}
