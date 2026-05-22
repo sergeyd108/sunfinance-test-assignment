@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 useHead({
   meta: [{ name: 'viewport', content: 'width=device-width, initial-scale=1' }],
   link: [{ rel: 'icon', href: '/favicon.ico' }],
@@ -6,53 +6,31 @@ useHead({
 })
 
 const title = 'Weather App'
-const description = 'Powerful Weather App for Sun Finance test assignment.'
+const description = 'Simple Weather App for Sun Finance test assignment.'
 
 useSeoMeta({
   title,
   description,
   ogTitle: title,
   ogDescription: description,
-  ogImage: 'https://ui.nuxt.com/assets/templates/nuxt/starter-light.png',
-  twitterCard: 'summary_large_image',
 })
 </script>
 
 <template>
-  <UApp>
-    <UHeader>
+  <UApp class="flex h-full flex-col">
+    <UHeader :toggle="false" :ui="{ root: 'bg-transparent border-none' }" class="">
       <template #left>
-        <NuxtLink to="/">
-          <AppLogo class="h-6 w-auto shrink-0" />
-        </NuxtLink>
-
-        <TemplateMenu />
+        <AppLogo class="h-6" />
       </template>
 
       <template #right>
+        <TempUnitSwitch />
         <UColorModeButton />
-
-        <UButton
-          to="https://github.com/nuxt-ui-templates/starter"
-          target="_blank"
-          icon="i-simple-icons-github"
-          aria-label="GitHub"
-          color="neutral"
-          variant="ghost"
-        />
       </template>
     </UHeader>
 
-    <UMain>
+    <UMain class="-mt-(--ui-header-height) flex flex-1 flex-col">
       <NuxtPage />
     </UMain>
-
-    <USeparator icon="i-lucide-sun" />
-
-    <UFooter>
-      <template #left>
-        <p class="text-muted text-sm">Weather App • © {{ new Date().getFullYear() }}</p>
-      </template>
-    </UFooter>
   </UApp>
 </template>
