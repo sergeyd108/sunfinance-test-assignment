@@ -1,64 +1,72 @@
-# Nuxt Starter Template
+# The Weather App
 
-[![Nuxt UI](https://img.shields.io/badge/Made%20with-Nuxt%20UI-00DC82?logo=nuxt&labelColor=020420)](https://ui.nuxt.com)
+A small Nuxt 4 SPA built as a take-home assignment: city search with autocomplete, a 7-day forecast, temperature unit toggle, and reverse-geocoded location names.
 
-Use this template to get started with [Nuxt UI](https://ui.nuxt.com) quickly.
+## Stack
 
-- [Live demo](https://starter-template.nuxt.dev/)
-- [Documentation](https://ui.nuxt.com/docs/getting-started/installation/nuxt)
+- **Nuxt 4** (Vue 3, SSR disabled / SPA mode), TypeScript
+- **Pinia** — temperature unit store
+- **@nuxt/ui v4** + **Tailwind v4** — UI components and styling
+- **VueUse** — composition utilities
+- **pnpm** — package manager
 
-<a href="https://starter-template.nuxt.dev/" target="_blank">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png">
-    <img alt="Nuxt Starter Template" src="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png" width="830" height="466">
-  </picture>
-</a>
+## Getting started
 
-> The starter template for Vue is on https://github.com/nuxt-ui-templates/starter-vue.
-
-## Quick Start
-
-```bash [Terminal]
-npm create nuxt@latest -- -t ui
-```
-
-## Deploy your own
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-name=starter&repository-url=https%3A%2F%2Fgithub.com%2Fnuxt-ui-templates%2Fstarter&demo-image=https%3A%2F%2Fui.nuxt.com%2Fassets%2Ftemplates%2Fnuxt%2Fstarter-dark.png&demo-url=https%3A%2F%2Fstarter-template.nuxt.dev%2F&demo-title=Nuxt%20Starter%20Template&demo-description=A%20minimal%20template%20to%20get%20started%20with%20Nuxt%20UI.)
-
-## Setup
-
-Make sure to install the dependencies:
-
-```bash
+```sh
 pnpm install
+pnpm dev          # dev server
+pnpm build        # production build
+pnpm preview      # preview the production build locally
+pnpm lint         # eslint
+pnpm lint:fix     # eslint --fix
+pnpm typecheck    # nuxi typecheck
+pnpm fmt          # prettier (includes Tailwind class sorting)
 ```
 
-## Development Server
+Requirements: Node 22+, pnpm 11+.
 
-Start the development server on `http://localhost:3000`:
+Copy `.env.example` to `.env` and set your OpenWeather API key:
 
-```bash
-pnpm dev
+```
+NUXT_PUBLIC_OPEN_WEATHER_APP_ID=your_key_here
 ```
 
-## Production
+## Project layout
 
-Build the application for production:
-
-```bash
-pnpm build
+```
+app/
+├── pages/
+│   ├── index.vue              # city search entry point
+│   └── index/forecast.vue     # forecast detail (nested route)
+├── features/
+│   ├── cities/                # search input component + composable
+│   └── forecast/              # forecast widget, day cards, composables
+├── components/                # shared UI: logo, error state, temp toggle, weather icon
+├── stores/                    # weather.ts — selected temperature unit
+├── value-objects/             # Temperature.ts, Coordinates.ts
+├── middleware/                # weather.ts — coordinate validation guard
+└── app.vue / app.config.ts
 ```
 
-Locally preview production build:
+Feature folders keep a component and its composable co-located; `pages/` stays thin and delegates to `features/`.
 
-```bash
-pnpm preview
-```
+## Design decisions
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+**Reverse geocoding for location names.** The forecast page calls OpenWeather's `/geo/1.0/reverse` with the coordinates to resolve the city and country names. When the forecast URL is opened directly (e.g. a shared link), no city name is available — only coordinates — so geocoding is the only way to display it.
 
-## Renovate integration
+**Unit switch re-fetches instead of converting locally.** Toggling °C / °F passes the `units` param to the API and discards the previous response. This sidesteps accumulated rounding errors and keeps every displayed value authoritative — the API always returns the right number for the right unit.
 
-Install [Renovate GitHub app](https://github.com/apps/renovate/installations/select_target) on your repository and you are good to go.
+**Forecast modal lives in its own page.** The modal is rendered by a dedicated nested route (`/forecast?lat=…&lon=…`) rather than being toggled inside the index page. The URL is real and deep-linkable, and the two views stay cleanly separated — the search page doesn't need to know anything about the forecast layout.
+
+**Coordinate validation in route middleware.** `app/middleware/weather.ts` parses and validates `lat`/`lon` via the `Coordinates` value object before the forecast page mounts. Invalid or missing coordinates abort navigation immediately (400) rather than letting the page render and fail mid-fetch.
+
+**Value objects for domain primitives.** `Temperature` and `Coordinates` are small classes that carry their own validation and formatting. Keeps the display logic and invariants next to the data rather than scattered across components.
+
+## CI/CD
+
+`.github/workflows/deploy.yml`:
+
+1. `ci` — `pnpm install` → `pnpm lint` → `pnpm typecheck`.
+2. `deploy` — `vercel deploy --prod` on push to `main`, depends on `ci`.
+
+The deploy job expects `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID` in the repository secrets.
