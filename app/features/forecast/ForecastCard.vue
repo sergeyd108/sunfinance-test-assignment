@@ -41,7 +41,7 @@ const date = computed(() => {
 
     <div class="desktop:my-8 my-6 flex items-start justify-center leading-none">
       <span class="desktop:text-8xl text-7xl font-bold">{{ currentTemp.value }}</span>
-      <span class="text-primary desktop:text-4xl mt-2 text-3xl font-semibold">{{ currentTemp.unitLabel }}</span>
+      <span class="text-primary desktop:text-6xl mt-2 text-4xl font-semibold">{{ currentTemp.unitLabel }}</span>
     </div>
 
     <p class="text-muted text-md desktop:text-lg">{{ dailyMinTemp }} / {{ dailyMaxTemp }}</p>
