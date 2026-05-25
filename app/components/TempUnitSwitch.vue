@@ -1,20 +1,20 @@
 <script setup lang="ts">
-const weatherStore = useWeatherStore()
+const unitsStore = useUnitsStore()
 </script>
 
 <template>
   <div class="flex gap-1">
     <UButton
-      :variant="weatherStore.unit === 'metric' ? 'solid' : 'ghost'"
+      :variant="unitsStore.temperatureUnit === 'metric' ? 'solid' : 'ghost'"
       label="°C"
       size="sm"
-      @click="weatherStore.unit = 'metric'"
+      @click="unitsStore.temperatureUnit = 'metric'"
     />
     <UButton
-      :variant="weatherStore.unit === 'imperial' ? 'solid' : 'ghost'"
+      :variant="unitsStore.temperatureUnit === 'imperial' ? 'solid' : 'ghost'"
       label="°F"
       size="sm"
-      @click="weatherStore.unit = 'imperial'"
+      @click="unitsStore.temperatureUnit = 'imperial'"
     />
   </div>
 </template>

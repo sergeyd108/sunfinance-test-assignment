@@ -1,6 +1,6 @@
 # The Weather App
 
-A small Nuxt 4 SPA built as a take-home assignment: city search with autocomplete, a 7-day forecast, temperature unit toggle, and reverse-geocoded location names.
+A small Nuxt 4 SPA built as a take-home assignment: city search with autocomplete, a current weather forecast with daily min/max, temperature unit toggle, and reverse-geocoded location names.
 
 ## Stack
 
@@ -19,7 +19,7 @@ pnpm build        # production build
 pnpm preview      # preview the production build locally
 pnpm lint         # eslint
 pnpm lint:fix     # eslint --fix
-pnpm typecheck    # nuxi typecheck
+pnpm typecheck    # nuxt typecheck
 pnpm fmt          # prettier (includes Tailwind class sorting)
 ```
 
@@ -40,9 +40,9 @@ app/
 │   └── index/forecast.vue     # forecast detail (nested route)
 ├── features/
 │   ├── cities/                # search input component + composable
-│   └── forecast/              # forecast widget, day cards, composables
+│   └── forecast/              # forecast widget, forecast card, composables
 ├── components/                # shared UI: logo, error state, temp toggle, weather icon
-├── stores/                    # weather.ts — selected temperature unit
+├── stores/                    # units.ts — selected temperature unit
 ├── value-objects/             # Temperature.ts, Coordinates.ts
 ├── middleware/                # weather.ts — coordinate validation guard
 └── app.vue / app.config.ts
@@ -54,7 +54,7 @@ Feature folders keep a component and its composable co-located; `pages/` stays t
 
 **Reverse geocoding for location names.** The forecast page calls OpenWeather's `/geo/1.0/reverse` with the coordinates to resolve the city and country names. When the forecast URL is opened directly (e.g. a shared link), no city name is available — only coordinates — so geocoding is the only way to display it.
 
-**Unit switch re-fetches instead of converting locally.** Toggling °C / °F passes the `units` param to the API and discards the previous response. This sidesteps accumulated rounding errors and keeps every displayed value authoritative — the API always returns the right number for the right unit.
+**Unit switch converts locally via a value object.** The forecast API is always called with `units=metric`; toggling °C / °F flips a flag in the Pinia store, and the `Temperature` value object (`app/value-objects/Temperature.ts`) converts the stored Celsius value on read. This avoids re-fetching on every toggle and keeps the cached response valid across unit changes.
 
 **Forecast modal lives in its own page.** The modal is rendered by a dedicated nested route (`/forecast?lat=…&lon=…`) rather than being toggled inside the index page. The URL is real and deep-linkable, and the two views stay cleanly separated — the search page doesn't need to know anything about the forecast layout.
 

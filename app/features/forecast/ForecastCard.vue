@@ -10,11 +10,11 @@ interface Props {
 
 const { forecast, location } = defineProps<Props>()
 
-const weatherStore = useWeatherStore()
+const unitsStore = useUnitsStore()
 
-const currentTemp = computed(() => new Temperature(forecast.current.temp, weatherStore.unit))
-const dailyMinTemp = computed(() => new Temperature(forecast.daily[0]?.temp.min ?? 0, weatherStore.unit))
-const dailyMaxTemp = computed(() => new Temperature(forecast.daily[0]?.temp.max ?? 0, weatherStore.unit))
+const currentTemp = computed(() => new Temperature(forecast.current.temp, unitsStore.temperatureUnit))
+const dailyMinTemp = computed(() => new Temperature(forecast.daily[0]?.temp.min ?? 0, unitsStore.temperatureUnit))
+const dailyMaxTemp = computed(() => new Temperature(forecast.daily[0]?.temp.max ?? 0, unitsStore.temperatureUnit))
 
 const weatherIcon = computed(() => forecast.current.weather[0]?.icon)
 const weatherDesc = computed(() => forecast.current.weather[0]?.description)
